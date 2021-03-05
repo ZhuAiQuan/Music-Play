@@ -40,6 +40,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .van-tabbar {
   background: transparent;
+  z-index: 20;
   .van-tabbar-item--active {
     background: transparent;
     filter: blur(3px);

@@ -1,10 +1,13 @@
 <template>
   <div class="play-container">
+    <div id="bg-content"></div>
     <div class="title">
       <h1>{{ data.info.song }}</h1>
       <div>{{ data.info.sing }}</div>
     </div>
-    <div class="cover"></div>
+    <div class="cover" :class="{ 'no-cover': !data.cover }">
+      <img :src="data.cover" alt="" v-show="data.cover">
+    </div>
     <div class="opeartion">
       <van-icon name="arrow-left" size="30px" @click="onPrev" />
       <van-icon name="play-circle-o" size="40px" @click="onPlay" v-show="!data.isPlay" />
@@ -29,7 +32,8 @@ interface DataType {
   isPlay: boolean,
   netInfo: NetMsg[],
   lyric: string,
-  now_lyric: Array
+  now_lyric: Array,
+  cover: string
 }
 interface NetMsg {
   id: number,
@@ -51,7 +55,8 @@ export default defineComponent({
       isPlay: false,
       netInfo: [],
       lyric: '',
-      now_lyric: []
+      now_lyric: [],
+      cover:''
     })
 
     const onPause = () => {
@@ -124,10 +129,9 @@ export default defineComponent({
                 name: item.name
               }
             })
+            MusicDetail();
             MusicLyric()
           }
-          
-          console.log(res)
         },
       })
     }
@@ -145,6 +149,25 @@ export default defineComponent({
           if (res.lrc && res.lrc.lyric) data.lyric = res.lrc.lyric
           else data.lyric = ''
           // debugger
+        }
+      })
+    }
+    // 歌曲详情
+    function MusicDetail(i: number = 0) {
+      const ids = data.netInfo[i].id;
+      data.cover = '';
+      $.ajax({
+        url: `https://wyy.wangpinpin.com/song/detail?ids=${ids}`,
+        xhrFields: {
+          withCredentials: true, //关键
+        },
+        method: 'get',
+        success: (res) => {
+          if (+res.code === 200) {
+            data.cover = res.songs[0].al.picUrl;
+            document.getElementById('bg-content').style.backgroundImage = `url(${data.cover})`;
+            document.getElementById('bg-content').style.backgroundSize = `cover`;
+          }
         }
       })
     }
@@ -202,17 +225,24 @@ export default defineComponent({
   height: calc(100% - 50px);
   overflow: hidden;
   position: relative;
+  z-index: 10;
   // background-image: linear-gradient(to top left, #409EFF, #E6A23C);
   .cover {
-    // position: absolute;
-    // top: 40%;
-    // left: 50%;
-    // transform: translate(-50%, -60%);
     width: 200px;
     height: 200px;
-    border-radius: 5px;
-    background-image: linear-gradient(to bottom right, #67C23A, #E6A23C);
+    border-radius: 50%;
     margin: 0 auto;
+    overflow: hidden;
+    // transform:rotate(360deg);
+    // transition:transform initial linear;
+    img {
+      width: 100%;
+      height: 100%;
+      -webkit-animation: circle 10s infinite linear;
+    }
+  }
+  .no-cover {
+    background-image: linear-gradient(to bottom right, #67C23A, #E6A23C);
   }
   .title {
     height: 24%;
@@ -247,5 +277,21 @@ export default defineComponent({
       margin-bottom: 10px;
     }
   }
+  #bg-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% + 50px);
+    filter: blur(10px);
+    z-index: -1;
+  }
+}
+</style>
+
+<style lang="less">
+@-webkit-keyframes circle{
+    0%{ transform:rotate(0deg); }
+    100%{ transform:rotate(360deg); }
 }
 </style>
