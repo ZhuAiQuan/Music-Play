@@ -24,4 +24,7 @@ npm run dev
 > 基于vite vue3 ts vant 构建 使用jquery ajax请求 （axios跨域问题无法在线上使用）
 > 歌词来源于网易云 api来源于https://github.com/Binaryify/NeteaseCloudMusicApi 这位大佬
 
+> 计划
+> 歌词/封面获取 来自app.vue 时获取 
+> 
 
