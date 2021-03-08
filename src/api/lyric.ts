@@ -1,21 +1,22 @@
-import axios from '../util/api.request'
+import { request } from '../util/request'
 
 export const searchSong = (keyword: string) => {
-  const params = { timestamp: new Date().getTime(), keyword };
-  return axios.request({
-    url: '/search',
-    withCredentials: true,
+  return request({
+    url: `/search?keywords=${keyword}`,
     method: 'get',
-    params
   })
 }
 
 export const getLyric = (id: number) => {
-  const params = { timestamp: new Date().getTime(), id };
-  return axios.request({
-    url: '/lyric',
-    withCredentials: true,
-    method: 'get',
-    params
+  return request({
+    url: `/lyric?id=${id}`,
+    method: 'get'
+  })
+}
+
+export const SongDetail = (ids: number) => {
+  return request({
+    url: `/song/detail?ids=${ids}`,
+    method: 'get'
   })
 }

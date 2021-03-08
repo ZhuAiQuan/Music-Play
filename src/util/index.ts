@@ -4,7 +4,9 @@ interface State {
   list: SongsInfo[]
   audio: any
   src: string,
-  currentTime: number[]
+  currentTime: number[],
+  nowInfo: NowInfo,
+  nowLyric: string[]
 }
 export interface SongsInfo {
   song: string
@@ -12,14 +14,25 @@ export interface SongsInfo {
   lastModified: number
   url: string
   sing: string
-  type: string
+  type: string,
+}
+export interface NowInfo {
+  songs: any[],
+  lyric: string,
+  cover: string
 }
 
 export const state: State = reactive({
   list: [],
   audio: null,
   src: '',
-  currentTime: []
+  currentTime: [],
+  nowInfo: {
+    songs: [],
+    lyric: '',
+    cover: ''
+  },
+  nowLyric: []
 })
 
 export const getPlayList = (list: SongsInfo[]):void => {

@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { state, SongsInfo, resetCurrent } from '../../util'
 import { searchSong, getLyric } from '../../api/lyric'
 import $ from 'jquery'
@@ -77,16 +77,12 @@ export default defineComponent({
       state.list.forEach((item: SongsInfo, i: number) => {
         if (item.url === data.info.url && state.list[i - 1]) {
           state.audio.src = state.list[i-1].url;
-          state.audio.play();
           data.isPlay = true;
           data.now_lyric = []
-          getSongInfo()
         } else if (item.url === data.info.url && !state.list[i - 1]) {
           state.audio.src = state.list[state.list.length-1].url;
-          state.audio.play();
           data.isPlay = true;
           data.now_lyric = []
-          getSongInfo()
         }
       })
     }
@@ -96,10 +92,9 @@ export default defineComponent({
         if (item.url === data.info.url) {
           if (state.list[i+1]) state.audio.src = state.list[i+1].url
           else state.audio.src = state.list[0].url
-          state.audio.play();
+          // state.audio.play();
           data.isPlay = true;
           data.now_lyric = []
-          getSongInfo();
           return
         }
       }
@@ -107,7 +102,7 @@ export default defineComponent({
     // 获取歌曲信息
     function getSongInfo() {
       data.info = state.list.find((item: SongsInfo) => item.url === state.audio.src);
-      searchMusic()
+      // searchMusic()
     }
     // 在线获取音乐信息
     function searchMusic() {
@@ -173,9 +168,14 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      if (state.audio.src && (!state.audio.paused || !state.audio.ended)) {
+      if (state.audio.src && !state.audio.paused) {
+        data.now_lyric = []
         data.isPlay = true
-        // debugger
+        data.cover = state.nowInfo.cover
+        data.lyric = state.nowInfo.lyric
+        document.getElementById('bg-content').style.backgroundImage = `url(${data.cover})`;
+        document.getElementById('bg-content').style.backgroundSize = `cover`;
+        data.now_lyric = state.nowLyric
         getSongInfo()
       } else {
         data.isPlay = false
@@ -185,6 +185,11 @@ export default defineComponent({
       state.audio.onplay = () => {// 监听播放状态
         data.now_lyric = []
         data.isPlay = true
+        data.cover = state.nowInfo.cover
+        data.lyric = state.nowInfo.lyric
+        document.getElementById('bg-content').style.backgroundImage = `url(${data.cover})`;
+        document.getElementById('bg-content').style.backgroundSize = `cover`;
+        data.now_lyric = state.nowLyric
         getSongInfo()
       }
     })
@@ -192,28 +197,14 @@ export default defineComponent({
       document.getElementById('app').style.backgroundImage = "none"
     })
 
-    watch(() => state.currentTime, (times) => {
-      if (Array.isArray(times) && times.length) {
-        const t = times[0]
-        nextTick(() => {
-          const time = resetCurrent(t);
-          if (data.lyric && data.lyric.includes(time)) {
-            const now = data.lyric.substring(data.lyric.indexOf(time));
-            const lrc = now.substring(now.indexOf(']') + 1, now.indexOf('[') > -1 ? now.indexOf('[') : now.length - 1); // 当前的歌词
-
-            if (!data.now_lyric.length || data.now_lyric[data.now_lyric.length - 1] !== lrc) data.now_lyric.push(lrc); // 最后一句不与当前这句相同这添加进来
-            if (data.now_lyric.length > 3) data.now_lyric.shift()
-          }
-        })
-      }
-    })
+    
     
     return {
       data,
       onPlay,
       onPause,
       onPrev,
-      onNext
+      onNext,
     }
   }
 })
