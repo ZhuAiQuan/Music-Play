@@ -25,6 +25,6 @@ npm run dev
 > 歌词来源于网易云 api来源于https://github.com/Binaryify/NeteaseCloudMusicApi 这位大佬
 
 > 计划
-> 歌词/封面获取 来自app.vue 时获取 
+> 歌词有时候读取错误
 > 
 
