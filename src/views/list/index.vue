@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent } from 'vue'
 import { state, SongsInfo } from '../../util/index'
 
 export default defineComponent({
@@ -24,9 +24,6 @@ export default defineComponent({
     const nowPlay = (item: SongsInfo) => {
       state.audio.src = item.url
     }
-    onMounted(() => {
-      console.log(state.list)
-    })
 
     return {
       list: state.list,
