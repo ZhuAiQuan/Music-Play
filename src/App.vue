@@ -84,7 +84,8 @@ export default defineComponent({
         // debugger
       }
       audio.value.onloadstart = async () => {// 当浏览器开始寻找指定的音频/视频时，会发生 loadstart 事件。即当加载过程开始时。
-        state.nowLyric = []
+        state.nowLyric = [];
+        state.nowInfo.lyric = '';
         const { sing, song } = state.list.find(item => item.url === audio.value.src);
         await searchMusic(`${sing}-${song}`);
         state.nowInfo.songs = info.songs;
