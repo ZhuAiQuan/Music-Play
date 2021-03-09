@@ -8,13 +8,19 @@
     <van-uploader :before-read="beforeRead" accept="audio/*" multiple>
       <van-button icon="plus" type="primary">上传文件</van-button>
     </van-uploader>
+    <div style="margin-bottom: 30px"></div>
+    <van-divider dashed @click="refresh">每日一文</van-divider>
+    <h1>{{ txt.title }}</h1>
+    <h2>{{ txt.author }}</h2>
+    <div v-html="txt.content" class="txt-content"></div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, reactive, ref } from 'vue';
 import { getPlayList, SongsInfo, state } from '../../util';
 import { Dialog } from 'vant'
+import $ from 'jquery'
 
 interface SongInfo {
   songs: string,
@@ -25,11 +31,21 @@ interface SongDetail {
   song: string,
   type: string
 }
+interface TxtReactive<T> {
+  author: T,
+  title: T,
+  content: T
+}
 
 export default defineComponent({
   name: 'home',
   setup() {
     const url = ref('');
+    const txt:string = reactive({
+      title: '',
+      author: '',
+      content: ''
+    })
     const play_list: SongsInfo[] = ref([])
     const beforeRead = (file) => {
       if (file.length) {
@@ -102,14 +118,31 @@ export default defineComponent({
         }
       }
     }
+    function refresh() {
+      $.ajax({
+        url: 'https://api.wangpinpin.com/unAuth/getEveryDayText',
+        success: (res) => {
+          if (+res.code) {
+            //
+          } else {
+            txt.title = res.data.title;
+            txt.author = res.data.author;
+            txt.content = res.data.content
+          }
+        }
+      })
+    }
     onMounted(() => {
-      play_list.value = state.list
+      play_list.value = state.list;
+      refresh()
     })
 
     return {
       beforeRead,
       url,
-      play_list
+      play_list,
+      refresh,
+      txt
     }
   }
 })
@@ -119,5 +152,12 @@ export default defineComponent({
 .content {
   text-align: center;
   padding-top: 10px;
+  .txt-content {
+    text-align: left;
+    padding: 0 10px 50px;
+    ::v-deep p {
+      text-indent: 2em;
+    }
+  }
 }
 </style>
