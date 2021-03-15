@@ -61,14 +61,12 @@ export default defineComponent({
               url: window.webkitURL.createObjectURL(file[i]),
               sing,
               type
-              // info: resetName(file[i].name),
-              // cover: musicMetadata.parseBlob(file[i])
             })
           }
         }
       } else {
         if (!play_list.value.map(item => item.name).includes(file.name)) {
-          const { sing, song, type } = resetSongName(file.name)
+          const { sing, song, type } = (resetSongName(file.name) as any);
           play_list.value.push({
             song,
             sing,
@@ -155,7 +153,7 @@ export default defineComponent({
   .txt-content {
     text-align: left;
     padding: 0 10px 50px;
-    ::v-deep p {
+    :v-deep(p) {
       text-indent: 2em;
     }
   }

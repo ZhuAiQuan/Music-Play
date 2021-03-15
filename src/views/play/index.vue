@@ -18,6 +18,7 @@
       <div v-for="item in data.now_lyric" :key="item">{{ item }}</div>
     </div>
   </div>
+  
 </template>
 
 <script lang="ts">
@@ -42,6 +43,7 @@ interface NetMsg {
 export default defineComponent({
   name: 'play-page',
   setup() {
+    
     const data: DataType = reactive({
       info: {
         song: '',
@@ -139,7 +141,7 @@ export default defineComponent({
       onPlay,
       onPause,
       onPrev,
-      onNext,
+      onNext
     }
   }
 })
@@ -161,6 +163,7 @@ export default defineComponent({
     overflow: hidden;
     // transform:rotate(360deg);
     // transition:transform initial linear;
+    -webkit-box-reflect: below 10px linear-gradient(transparent, rgba(0, 0, 0, .4));
     img {
       width: 100%;
       height: 100%;
